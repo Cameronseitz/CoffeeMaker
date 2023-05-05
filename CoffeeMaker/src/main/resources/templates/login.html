@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Log in</title>
+<style>
+input.ng-valid {
+	background-color: lightgreen;
+}
+
+input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
+	background-color: red;
+}
+
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+
+form {
+	display: grid; 
+	grid-template-columns: 1fr; 
+	grid-template-rows: 1fr; 
+	gap: 5px 50px; 
+	grid-template-areas: 
+	  "top"
+	  "bottom";
+}
+.inputs {
+	grid-area:top;
+	margin: 5px;
+}
+
+footer {
+	grid-area:bottom;
+}
+
+.checkbox {
+	max-width: 15px;
+}
+
+*:not(.generic-container *) {
+	background-color: teal !important;
+	
+}
+
+.generic-container {
+background-color: white !important;
+}
+
+
+
+
+</style>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
+			var app = angular.module('myApp', []);
+			app.controller('loginCtrl', function($scope, $http, $q) {	
+				
+				//user object has a field for username and password
+				$scope.user = {};
+				
+				//check to make sure there aren't any users logged in
+				$scope.currentUsers = function() {
+					$http.get("/api/v1/users").then(
+						//means someone is signed in
+						function(success) {
+							window.location.href = "/index";
+						}, function(rejection) {
+							//this means we're good
+						});
+				 }
+				
+		
+				//called upon push of login button
+				$scope.signIn = function() {
+					$scope.success = false;
+					$scope.failure = false;
+					
+					//post command that goes to the login endpoint, passing in the user object from the form
+					$http.post("/api/v1/users/" + $scope.user.username, $scope.user).then(
+							function(success) {
+								$scope.success = true;
+								$scope.failure = false;
+								//redirect home upon success
+								window.location.href = "/index";
+							}, function(rejection) {
+								console.error("Error while signing in.");
+								$scope.failure = true;
+								$scope.success = false;
+							});
+				}
+				
+				//upon button press, do signin function
+				$scope.submit = function() {
+					$scope.signIn();
+				}
+				
+				//reset replaces the username and password to empty strings
+				$scope.reset = function() {
+					$scope.user = {
+						username : '',
+						password : '',
+					};
+					
+					if (undefined != $scope.loginForm) {
+						$scope.loginForm.$setPristine(); // reset Form
+					}
+				}
+				
+				//reset form and check for current users upon loading of page
+				$scope.reset();  
+				$scope.currentUsers();
+				 
+			});
+			
+			
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+
+		<div ng-app="myApp" class="generic-container ng-cloak"
+			ng-controller="loginCtrl as ctrl">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="lead">Log in</span>
+				</div>
+	
+				<div class="formcontainer">
+					<form ng-submit="submit()" name="loginForm"
+						class="form-horizontal">
+						
+						<div class="inputs">
+							<div class="row">
+								<div class="form-group col-md-7">
+									<label class="col-md-2 control-lable" for="file">Username</label>
+									<div class="col-md-12">
+										<input type="text" ng-model="user.username" name="username"
+											class="name form-control input-sm"
+											placeholder="Enter username" required="0" />
+										<div class="has-error" ng-show="loginForm.$dirty">
+											<span ng-show="loginForm.name.$error.required">This
+												is a required field.</span> <span
+												ng-show="loginForm.name.$invalid">This field is
+												invalid.</span>
+										</div>
+									</div>
+								</div>
+							</div>
+		
+							<div class="row">
+								<div class="form-group col-md-7">
+									<label class="col-md-2 control-lable" for="file">Password</label>
+									<div class="col-md-12">
+										<input type="password" ng-model="user.password" name="password"
+											class="price form-control input-sm"
+											placeholder="Enter password" required="0"/>
+										<div class="has-error" ng-show="loginForm.$dirty">
+											<span ng-show="loginForm.price.$error.required">This
+												is a required field</span> <span
+												ng-show="loginForm.price.$error.min">Minimum amount
+												is 0</span> <span ng-show="loginForm.price.$invalid">This
+												field is invalid </span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+		
+						<footer>
+							<div class="row">
+								<div class="form-actions floatRight">
+									<input type="submit" value="Sign in"
+										class="btn btn-primary btn-sm"
+										ng-disabled="loginForm.$invalid" />
+									<a href="/register" class="btn btn-warning btn-sm">New user?</a>
+								</div>
+							</div>
+						</footer>
+					</form>
+				</div>
+				<div ng-show="success">User Signed in</div>
+				<div ng-show="failure">Invalid username and/or password</div>
+			</div>
+		</div>
+
+	</div>
+
+
+</body>
+</html>

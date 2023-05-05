@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Add a Recipe</title>
+<style>
+input.ng-valid {
+	background-color: lightgreen;
+}
+
+input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
+	background-color: red;
+}
+
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+
+form {
+	display: grid; 
+	grid-template-columns: 1fr 1fr; 
+	grid-template-rows: 1fr; 
+	gap: 5px 50px; 
+	grid-template-areas: 
+	  "left right"
+	  "bottom bottom"; 
+}
+.inputs {
+	grid-area:left;
+	margin: 5px;
+}
+.ingredientsList {
+	grid-area:right;
+	margin: 5px;
+}
+footer {
+	grid-area:bottom;
+}
+
+.checkbox {
+	max-width: 15px;
+}
+
+
+</style>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+
+		<div class="generic-container ng-cloak"
+			ng-controller="recipeController as ctrl">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="lead">Add a Recipe</span>
+				</div>
+	
+				<div class="formcontainer">
+					<form ng-submit="submit()" name="addRecipeForm"
+						class="form-horizontal">
+						
+						<div class="inputs">
+							<div class="row">
+								<div class="form-group col-md-10">
+									<label class="col-md-2 control-lable" for="file">Name</label>
+									<div class="col-md-12">
+										<input type="text" ng-model="recipe.name" name="name"
+											class="name form-control input-sm"
+											placeholder="Enter recipe name" required="0" />
+										<div class="has-error" ng-show="addRecipeForm.$dirty">
+											<span ng-show="addRecipeForm.name.$error.required">This
+												is a required field.</span> <span
+												ng-show="addRecipeForm.name.$invalid">This field is
+												invalid.</span>
+										</div>
+									</div>
+								</div>
+							</div>
+		
+							<div class="row">
+								<div class="form-group col-md-7">
+									<label class="col-md-2 control-lable" for="file">Price</label>
+									<div class="col-md-12">
+										<input type="number" ng-model="recipe.price" name="price"
+											class="price form-control input-sm"
+											placeholder="Enter recipe price" required="0" min="0"/>
+										<div class="has-error" ng-show="addRecipeForm.$dirty">
+											<span ng-show="addRecipeForm.price.$error.required">This
+												is a required field</span> <span
+												ng-show="addRecipeForm.price.$error.min">Minimum amount
+												is 0</span> <span ng-show="addRecipeForm.price.$invalid">This
+												field is invalid </span>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div id = "ingredients">
+							<!-- from https://stackoverflow.com/questions/19544904/ng-repeat-access-key-and-value-for-each-object-in-array-of-objects -->
+								<div ng-repeat="(ingredient, checked) in selectedIngredients track by $index">
+									<div ng-if="checked == true">
+										<div id="ingredient" class="row">
+											<div class="form-group col-md-7">
+												<label class="col-md-2 control-lable" for="file">{{ingredient}}</label>
+												<div class="col-md-12">
+													<input type="number" ng-model="amounts[ingredient]" name="{{ingredient}}"
+														class="ingredient form-control input-sm"
+														placeholder="Enter amount of ingredient" required min="0"/>
+													<div class="has-error" ng-show="addRecipeForm.$dirty">
+														<span ng-show="addRecipeForm.ingredient.$error.required">This
+															is a required field.</span> <span
+															ng-show="addRecipeForm.ingredients[$index].$error.min">Minimum
+															amount is 0.</span> <span ng-show="addRecipeForm.ingredient.$invalid">This
+															field is invalid.</span>
+													</div>
+												</div>
+											</div>
+											
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+		
+						<div class="ingredientsList">
+							<h2>Ingredients</h2>
+							<div class="row">
+								<div ng-repeat="ingredient in ingredients track by $index">
+									<div class="row">
+										<input type="checkbox"
+											ng-model="$parent.selectedIngredients[ingredient]">
+										<tt> {{ingredient}}</tt>
+										</input>
+									</div>
+								</div>
+							</div>
+
+						</div>
+	
+						<footer>
+							<div class="row">
+								<div class="form-actions floatRight">
+									<input type="submit" value="Submit"
+										class="btn btn-primary btn-sm"
+										ng-disabled="addRecipeForm.$invalid" />
+									<button type="button" ng-click="reset()"
+										class="btn btn-warning btn-sm"
+										ng-disabled="addRecipeForm.$pristine">Reset Form</button>
+								</div>
+							</div>
+						</footer>
+						
+						
+					</form>
+				</div>
+				<div ng-show="success">Recipe Created</div>
+				<div ng-show="failure">Error while adding recipe.</div>
+			</div>
+	
+			<a href="/index">Home</a>
+		</div>
+
+	</div>
+
+
+</body>
+</html>

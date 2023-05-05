@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>CoffeeMaker</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+</head>
+
+<body class="body" ng-controller="indexCtrl">	
+	<div class="naui_grid" style="height: 400px; margin: 40px;">
+		<a ng-if="isEmployee()" ng-href="#!/inventory" class="pushable-button pushable-button__link pushable-button--orange">
+			Update Inventory
+			<img src="images/box-icon.png" width="20" height="20" style="margin-top: 10px;">
+		</a>
+		
+		<a ng-if="isEmployee()" ng-href="#!/recipe" class="pushable-button pushable-button__link pushable-button--orange">
+			Add a Recipe
+			<img src="images/plus-icon.png" class="pushable-button__image">
+		</a>
+		
+		<a ng-if="isEmployee()" ng-href="#!/editrecipe" class="pushable-button pushable-button__link pushable-button--orange">
+			Edit Recipe
+			<img src="images/edit-icon.png" class="pushable-button__image">
+		</a>
+		
+		<a ng-if="isEmployee()" ng-href="#!/ingredient" class="pushable-button pushable-button__link pushable-button--orange">
+			Add Ingredient
+			<img src="images/shopping-cart-icon.png" class="pushable-button__image">
+		</a>
+		
+		<a ng-if="isEmployee()" ng-href="#!/currentorders" class="pushable-button pushable-button__link pushable-button--orange">
+			Current Orders
+			<img src="images/coffee-icon.png" class="pushable-button__image">
+		</a>
+		
+		<a ng-if="isEmployee()" ng-href="#!/orderhistory" class="pushable-button pushable-button__link pushable-button--orange">
+			Order History
+			<img src="images/coffee-icon.png" class="pushable-button__image">
+		</a>
+		
+		<a ng-if="isEmployee()" ng-href="#!/deleterecipe" class="pushable-button pushable-button__link pushable-button--orange">
+			Delete Recipe
+			<img src="images/x-icon.png" class="pushable-button__image">
+		</a>
+		
+		<a ng-if="isCustomer()" ng-href="#!/ordercoffee" class="pushable-button pushable-button__link pushable-button--orange">
+			Order Beverage
+			<img src="images/coffee-icon.png" class="pushable-button__image">
+		</a>
+		
+		<a ng-if="isCustomer()" ng-href="#!/currentorders-customer" class="pushable-button pushable-button__link pushable-button--orange">
+			Current Orders
+			<img src="images/slides-icon.png" class="pushable-button__image">
+		</a>
+	</div>
+</body>
+</html>

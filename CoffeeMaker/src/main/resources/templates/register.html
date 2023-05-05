@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Register</title>
+<style>
+input.ng-valid {
+	background-color: lightgreen;
+}
+
+input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
+	background-color: red;
+}
+
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+
+form {
+	display: grid; 
+	grid-template-columns: 1fr; 
+	grid-template-rows: 1fr; 
+	gap: 5px 50px; 
+	grid-template-areas: 
+	  "top"
+	  "bottom"; 
+}
+.inputs {
+	grid-area:top;
+	margin: 5px;
+}
+
+footer {
+	grid-area:bottom;
+}
+
+.checkbox {
+	max-width: 15px;
+}
+
+*:not(.generic-container *) {
+	background-color: teal !important;
+	
+}
+
+.generic-container {
+background-color: white !important;
+}
+
+</style>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+		<script>
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*<![CDATA[*/ 
+			var app = angular.module('myApp', []);
+			app.controller('registerCtrl', function($scope, $http, $q) {	
+				
+				//user object has username, password, repeat password, and role
+				$scope.user = {};
+		
+				//signs in user using endpoint specified
+				$scope.signIn = function() {
+					$scope.success = false;
+					$scope.failure = false;
+					$scope.passwordsMismatch = false;
+					
+					//check to make sure passwords match
+					if ($scope.user.password != $scope.user.repeatPassword) {
+						$scope.passwordsMismatch = true;
+						return;
+					}
+					
+					//enforce username pattern
+					if (!$scope.user.username.match(/^\S{5,15}$/)) {
+						$scope.failure = true;
+						return;
+					}
+					
+					//enforce password pattern
+					if (!$scope.user.password.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{5,15}$/)) {
+						$scope.failure = true;
+						return;
+					}
+					
+					if (!$scope.user.repeatPassword.match(/^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{5,15}$/)) {
+						$scope.failure = true;
+						return;
+					}
+					
+					//make call to register endpoint with user object
+					$http.post("/api/v1/users", $scope.user).then(
+							function(success) {
+								$scope.success = true;
+								$scope.failure = false;
+								//redirect to login page upon success
+								window.location.href = "/login";
+							}, function(rejection) {
+								console.error("Error while creating user. Username already exists.");
+								$scope.failure = true;
+								$scope.success = false;
+							});
+				}
+				
+				//when the submit button is pushed, sign in
+				 $scope.submit = function() {
+				 	$scope.signIn();	
+				 }
+	
+				//reset all user fields to empty strings
+				$scope.reset = function() {
+					$scope.user = {
+						username : '',
+						password : '',
+						repeatPassword : '',
+						role: ''
+					};
+					
+					if (undefined != $scope.registerForm) {
+						$scope.registerForm.$setPristine(); // reset Form
+					}
+				}
+				
+				//upon loading of page, reset the form
+				$scope.reset();  
+				 
+			});
+			
+			
+			/* Without these comments, Thymeleaf will try to parse the Javascript as XML and break itself sometimes */
+			/*]]>*/
+		</script>
+
+		<div ng-app="myApp" class="generic-container ng-cloak"
+			ng-controller="registerCtrl as ctrl">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="lead">Register</span>
+				</div>
+	
+				<div class="formcontainer">
+					<form ng-submit="submit()" name="registerForm"
+						class="form-horizontal">
+						
+						<div class="inputs">
+							<div class="row">
+								<div class="form-group col-md-10">
+									<label class="col-md-2 control-lable" for="file">Username</label>
+									<div class="col-md-12">
+										<input type="text" ng-model="user.username" name="username"
+											class="name form-control input-sm"
+											placeholder="5-15 characters with no spaces" required="0"
+											pattern="^\S{5,15}$" />
+										<div class="has-error" ng-show="registerForm.$dirty">
+											<span ng-show="registerForm.name.$error.required">This
+												is a required field.</span> <span
+												ng-show="registerForm.name.$invalid">This field is
+												invalid.</span>
+										</div>
+									</div>
+								</div>
+							</div>
+		
+							<div class="row">
+								<div class="form-group col-md-10">
+									<label class="col-md-2 control-lable" for="file">Password</label>
+									<div class="col-md-12">
+										<input type="password" ng-model="user.password" name="password"
+											class="price form-control input-sm"
+											placeholder="5-15 characters with no spaces. Include at least one number and one special character (!@#$%^&*)" 
+											required="0"
+											pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{5,15}$" />
+											
+										<div class="has-error" ng-show="registerForm.$dirty">
+											<span ng-show="registerForm.price.$error.required">This
+												is a required field</span> 
+											<span ng-show="registerForm.price.$invalid">This
+												field is invalid </span>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="form-group col-md-10">
+									<label class="col-md-2 control-lable" for="file">Repeat Password</label>
+									<div class="col-md-12">
+										<input type="password" ng-model="user.repeatPassword" name="repeatPassword"
+											class="price form-control input-sm"
+											placeholder="Passwords must match" required="0"
+											pattern="^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{5,15}$"/>
+										<div class="has-error" ng-show="registerForm.$dirty">
+											<span ng-show="registerForm.price.$error.required">This
+												is a required field</span> <span ng-show="registerForm.price.$invalid">This
+												field is invalid </span>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="form-group col-md-7">
+									<label class="col-md-2 control-lable" for="file">Role</label>
+									<div class="col-md-12">
+										<select ng-model="user.role"
+												required="true">
+											<option value="">Pick a role</option>
+											<option value="employee">Employee</option>
+											<option value="customer">Customer</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+		
+						<footer>
+							<div class="row">
+								<div class="form-actions floatRight">
+									<input type="submit" value="Sign in"
+										class="btn btn-primary btn-sm"
+										ng-disabled="registerForm.$invalid" />
+									<button type="button" ng-click="reset()"
+										class="btn btn-warning btn-sm"
+										ng-disabled="registerForm.$pristine">Reset Form</button>
+								</div>
+							</div>
+						</footer>
+					</form>
+				</div>
+				<div ng-show="success">User created</div>
+				<div ng-show="failure">Username is already taken</div>
+				<div ng-show="passwordsMismatch">Passwords do not match</div>
+			</div>
+		</div>
+
+	</div>
+
+
+</body>
+</html>

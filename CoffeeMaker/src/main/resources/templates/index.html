@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>CoffeeMaker</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" href="css/style.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script>
+<script src="scripts/app.js"></script>
+<script src="scripts/homeController.js"></script>
+<script src="scripts/inventoryController.js"></script>
+<script src="scripts/recipeController.js"></script>
+<script src="scripts/editRecipeController.js"></script>
+<script src="scripts/ingredientController.js"></script>
+<script src="scripts/deleteRecipeController.js"></script>
+<script src="scripts/currentOrdersController.js"></script>
+<script src="scripts/currentOrdersCustomerController.js"></script>
+<script src="scripts/orderCoffeeController.js"></script>
+<script src="scripts/orderHistoryController.js"></script>
+
+</head>
+<body class="naui_body naui" ng-controller="indexController" ng-app="myApp">
+
+	<!-- Navigation Bar -->
+	<div class="navigation-bar">
+	
+	  <div class="navigation-bar__item">
+	    <a ng-href="#!/" class="navigation-bar__item--link">
+			<img src="images/house-icon.png" width="20" height="20"/>
+			Home
+		</a>
+	  </div>
+	  
+	  <div class="navigation-bar__item" style="display: flex; padding: 20px;">
+	    <img ng-if="isCustomer()" src="images/user-icon.png" width="20" height="20"/>
+		<img ng-if="isEmployee()" src="images/chef-user-icon.png" width="20" height="20"/>
+		<span style="margin:0px 10px">{{user.username}}</span>
+		<button class="pushable-button pushable-button--red" ng-click="logout()">Logout</button>
+	  </div>
+	  
+	</div>
+	
+	<!-- Main Body -->
+	<div ng-view></div>
+</body>
+</html>

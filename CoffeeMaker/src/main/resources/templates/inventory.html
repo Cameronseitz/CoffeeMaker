@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Update Inventory</title>
+<style>
+input.ng-valid {
+	background-color: lightgreen;
+}
+
+input.ng-dirty.ng-invalid-required,input.ng-dirty.ng-invalid-number {
+	background-color: red;
+}
+
+input.ng-dirty.ng-invalid-min {
+	background-color: yellow;
+}
+
+form {
+	display: grid; 
+	grid-template-columns: 1fr 1fr 1fr; 
+	grid-template-rows: 1fr; 
+	gap: 5px 5px; 
+	grid-template-areas: 
+	  "left right right"; 
+}
+
+.ingredients {
+	grid-area:right;
+	
+	display: grid; 
+	grid-template-columns: 1fr; 
+	grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+	gap: 5px 5px; 
+	grid-template-areas: 
+	  "top"
+	  "middle"
+	  "middle"
+	  "middle"
+	  "middle"
+	  "middle"
+	  "bottom";
+	
+}
+
+.ingredients h4 {
+	grid-area:top;
+}
+
+.ingredients add {
+	grid-area:bottom;
+	max-width: 50px;
+}
+.allIngredients {
+	grid-area:middle;
+	
+}
+
+.inventory {
+	grid-area:left;
+	
+	display:flex;
+	flex-direction:column;
+}
+
+
+.checkbox {
+	max-width: 15px;
+}
+
+
+
+</style>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+	<div layout:fragment="content">
+		<script	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+
+		<div class="generic-container ng-cloak"
+			ng-controller="inventoryController as ctrl">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<span class="lead">Update Inventory</span>
+				</div>
+				<div class="formcontainer">
+					<form ng-submit="submit()" name="updateInventoryForm"
+						class="form-horizontal">
+						<div class = ingredients>
+							<h4>Add Units</h4>
+							<div class="allIngredients">
+								<div ng-repeat="ingredient in inventory.ingredients">
+									<div id="ingredient.name" class="row">
+										<div class="form-group col-md-7">
+											<label class="col-md-2 control-lable" for="file">{{ingredient.name}}</label>
+											<div class="col-md-12">
+												<input type="number" ng-model="amounts[$index]" name="ingredient.name"
+													class="ingredient.name form-control input-sm"
+													placeholder="Enter amount of {{ingredient.name}}" required min="0"/>
+												<div class="has-error" ng-show="updateInventoryForm.$dirty">
+													<span ng-show="updateInventoryForm.ingredient.name.$error.required">This
+														is a required field.</span> <span
+														ng-show="updateInventoryForm.ingredient.name.$error.min">Minimum
+														amount is 0.</span> <span ng-show="updateInventoryForm.ingredient.name.$invalid">This
+														field is invalid.</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-actions floatRight">
+									<input type="submit" value="Add"
+										class="btn btn-primary btn-sm"
+										ng-disabled="addInventoryForm.$invalid" />
+									<button type="button" ng-click="reset()"
+										class="btn btn-warning btn-sm"
+										ng-disabled="addInventoryForm.$pristine">Reset Form</button>
+								</div>
+							</div>
+						</div>
+						<div class ="inventory">
+							<h4>Current Inventory</h4>
+							<div class="row">
+								<div ng-repeat="ingredient in inventory.ingredients">
+									<div class="row">
+										<div class="form-group col-md-10">
+											<h5 class="col-md-5 control-lable">{{ingredient.name}} {{ingredient.amount}}</h5>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div ng-show="success">Inventory added</div>
+				<div ng-show="failure">Error while adding inventory.</div>
+			</div>
+	
+			<a href="/index">Home</a>
+		</div>
+
+	</div>
+
+</body>
+</html>
